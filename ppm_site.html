@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiTOP-BR · Interactive Questionnaire &amp; PPM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#E7EBEC;
+    --paper-alt:#DCE3E4;
+    --card:#F4F6F5;
+    --ink:#131C24;
+    --ink-soft:#48575F;
+    --ink-faint:#7C8A90;
+    --line:#C2CBCC;
+    --line-soft:#D3DADB;
+    --teal:#1F5D57;
+    --teal-deep:#123B37;
+    --teal-tint:#DCEAE7;
+    --amber:#BE5F2C;
+    --amber-tint:#F2DFCB;
+    --danger:#A8402C;
+    --radius:10px;
+    --topbar-h:60px;
+    --tabbar-h:46px;
+    --legend-h:44px;
+    --shadow:0 1px 2px rgba(19,28,36,0.06), 0 1px 1px rgba(19,28,36,0.04);
+    font-family:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Spectral',Georgia,'Times New Roman',serif;
+    margin:0 0 .3em 0;
+    color:var(--ink);
+    font-weight:600;
+  }
+textarea {
+  resize: none;
+  width: 100%;
+  height: 75px;
+}
+
+a,
+a:hover,
+a:visited{
+    text-decoration: none;
+}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;}
+  a{color:var(--teal-deep);}
+  button{font-family:inherit;}
+  .topbar{
+    position:sticky; top:0; z-index:30;
+    height:var(--topbar-h);
+    background:var(--ink);
+    color:var(--paper);
+    display:flex; align-items:center; gap:16px;
+    padding:0 20px;
+    box-shadow:var(--shadow);
+  }
+  .topbar .brand{
+    font-family:'Spectral',serif; font-weight:600; font-size:1.05rem;
+    letter-spacing:.2px; white-space:nowrap;
+  }
+  .topbar .brand small{
+    display:block; font-family:'IBM Plex Mono',monospace; font-weight:400;
+    font-size:.62rem; letter-spacing:.08em; color:#9FB0AC; text-transform:uppercase;
+  }
+  .topbar-name{flex:none;}
+  .topbar-name input{
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.22); color:var(--paper);
+    border-radius:7px; padding:8px 11px; font-size:.82rem; font-family:inherit; width:500px;
+  }
+  .topbar-name input::placeholder{color:#9FB0AC;}
+  .topbar-name input:focus{outline:2px solid var(--teal); outline-offset:1px; border-color:var(--teal);}
+  .topbar .spacer{flex:1;}
+  .progress-pill{
+    font-family:'IBM Plex Mono',monospace; font-size:.75rem;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.16);
+    padding:5px 10px; border-radius:99px; white-space:nowrap;
+  }
+  .progress-pill b{color:#fff;}
+  .topbar-actions{display:flex; gap:8px;}
+  .btn{
+    cursor:pointer; border-radius:7px; border:1px solid var(--line);
+    background:var(--card); color:var(--ink); font-size:.82rem; font-weight:500;
+    padding:8px 13px; display:inline-flex; align-items:center; gap:6px;
+    transition:background .15s, border-color .15s, transform .05s;
+  }
+  .btn:hover{border-color:var(--ink-faint);}
+  .btn:active{transform:translateY(1px);}
+  .btn-ghost{
+    background:transparent; border-color:rgba(255,255,255,0.22); color:var(--paper);
+  }
+  .btn-ghost:hover{background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.4);}
+  .btn-primary{background:var(--teal); border-color:var(--teal); color:#fff;}
+  .btn-primary:hover{background:var(--teal-deep); border-color:var(--teal-deep);}
+  .btn-danger-outline{color:var(--danger); border-color:#DCC0B7;}
+  .btn-danger-outline:hover{background:#F7ECE8; border-color:var(--danger);}
+  .btn-sm{padding:5px 10px; font-size:.72rem;}
+  .icon{width:14px; height:14px; flex:none;}
+
+  .tabbar{
+    position:sticky; top:var(--topbar-h); z-index:25;
+    background:var(--paper); border-bottom:1px solid var(--line-soft);
+  }
+  .tabbar-inner{
+    max-width:760px; margin:0 auto; padding:0 20px;
+    display:flex; gap:22px; align-items:stretch; overflow-x:auto;
+  }
+  .tab-btn{
+    appearance:none; border:none; background:transparent; cursor:pointer;
+    padding:12px 2px; font-size:.86rem; font-weight:600; color:var(--ink-faint);
+    border-bottom:2px solid transparent; white-space:nowrap;
+    transition:color .12s, border-color .12s;
+  }
+  .tab-btn:hover{color:var(--ink);}
+  .tab-btn.active{color:var(--teal-deep); border-bottom-color:var(--teal);}
+
+  .tab-view{display:none;}
+  .tab-view.active{display:block;}
+
+  .wrap{max-width:760px; margin:0 auto; padding:0 20px;}
+  .intro{padding:38px 0 18px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:.72rem; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--teal-deep); margin-bottom:10px; display:block;
+  }
+  .intro h1{font-size:2rem;}
+  .intro .sub{color:var(--ink-soft); font-size:1rem; max-width:60ch; margin-bottom:18px;}
+  .disclaimer{
+    background:var(--card); border:1px solid var(--line-soft); border-left:3px solid var(--teal);
+    border-radius:8px; padding:14px 16px; font-size:.85rem; color:var(--ink-soft); margin-bottom:20px;
+  }
+  .disclaimer strong{color:var(--ink);}
+
+  .field-row{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:6px;}
+  .field{flex:1; min-width:200px;}
+  .field label{
+    display:block; font-size:.72rem; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--ink-faint); margin-bottom:5px; font-weight:600;
+  }
+  .field input[type=text]{
+    width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:7px;
+    background:#fff; font-size:.9rem; color:var(--ink); font-family:inherit;
+  }
+  .field input[type=text]:focus{outline:2px solid var(--teal); outline-offset:1px;}
+  .field textarea{
+    width:100%; padding:9px 11px; border:1px solid var(--line); border-radius:7px;
+    background:#fff; font-size:.88rem; color:var(--ink); font-family:inherit; resize:vertical;
+  }
+  .field textarea:focus{outline:2px solid var(--teal); outline-offset:1px;}
+
+  .legend-bar{
+    position:sticky; top:calc(var(--topbar-h) + var(--tabbar-h)); z-index:20;
+    background:var(--paper-alt); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft);
+    padding:9px 0; margin-top:22px;
+  }
+  .legend-inner{
+    max-width:760px; margin:0 auto; padding:0 20px;
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--ink-soft);
+  }
+  .legend-inner .chip{
+    display:inline-flex; align-items:center; gap:5px; white-space:nowrap;
+  }
+  .legend-inner .chip b{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px; border-radius:4px; background:var(--teal); color:#fff; font-size:.68rem;
+  }
+
+  #questionnaire{margin-top:4px;}
+  .item{
+    display:flex; align-items:center; gap:14px;
+    padding:13px 4px; border-bottom:1px solid var(--line-soft);
+  }
+  .item:nth-child(odd){background:var(--card);}
+  .item-num{
+    font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--ink-faint);
+    width:26px; flex:none; text-align:right;
+  }
+  .item-text{flex:1; font-size:.92rem; color:var(--ink); margin:0; min-width:0;}
+  .item-options{display:flex; gap:5px; flex:none;}
+  .opt{
+    width:34px; height:34px; border-radius:7px; border:1px solid var(--line);
+    background:#fff; color:var(--ink-soft); font-size:.85rem; font-weight:600;
+    cursor:pointer; transition:background .12s, border-color .12s, color .12s, transform .05s;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .opt:hover{border-color:var(--teal);}
+  .opt:active{transform:translateY(1px);}
+  .opt.active{background:var(--teal); border-color:var(--teal); color:#fff;}
+  .item.answered .item-num{color:var(--teal-deep);}
+
+  @media (max-width:600px){
+    .item{flex-wrap:wrap;}
+    .item-text{flex:1 1 100%; order:1; margin-bottom:8px;}
+    .item-num{order:0;}
+    .item-options{order:2; margin-left:40px;}
+    .opt{width:30px; height:30px; font-size:.78rem;}
+    .topbar{padding:0 12px; gap:10px;}
+    .topbar .brand small{display:none;}
+    .topbar-name input{width:100px;}
+  }
+
+  #results{margin-top:46px; padding-top:6px;}
+  .results-head{display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:4px;}
+  .results-head h2{font-size:1.5rem;}
+  .compare-tag{
+    font-family:'IBM Plex Mono',monospace; font-size:.72rem; background:var(--amber-tint);
+    border:1px solid #DEB690; color:#7A3C15; padding:5px 10px; border-radius:99px;
+  }
+
+  .hierarchy-wrap{
+    background:var(--card); border:1px solid var(--line-soft); border-radius:var(--radius);
+    padding:18px 14px 8px; margin:18px 0 26px;
+  }
+  .hierarchy-wrap svg text{font-family:'IBM Plex Sans',sans-serif;}
+  .hierarchy-caption{
+    text-align:center; font-size:.72rem; color:var(--ink-faint); margin-top:2px; padding-bottom:10px;
+  }
+
+  .scale-row{padding:16px 0; border-bottom:1px solid var(--line-soft);}
+  .scale-row:last-child{border-bottom:none;}
+  .scale-head{display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;}
+  .scale-name{font-family:'Spectral',serif; font-weight:600; font-size:1.02rem;}
+  .scale-desc{font-size:.8rem; color:var(--ink-soft); margin:0 0 10px; max-width:100ch;}
+  .scale-score{font-family:'IBM Plex Mono',monospace; font-size:.95rem; font-weight:600; color:var(--teal-deep); white-space:nowrap;}
+  .scale-score .imp{color:var(--amber); margin-left:8px;}
+
+  .spectrum{
+    position:relative; height:34px; border-radius:8px; overflow:visible;
+    background:linear-gradient(90deg, var(--teal) 0%, #7C8F5B 45%, var(--amber) 100%);
+  }
+  .spectrum .gridline{position:absolute; top:0; bottom:0; width:1px; background:rgba(255,255,255,0.55);}
+  .spectrum .glabel{position:absolute; top:38px; transform:translateX(-50%); font-size:.65rem; font-family:'IBM Plex Mono',monospace; color:var(--ink-faint);}
+  .marker{
+    position:absolute; top:-9px; transform:translateX(-50%);
+    width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent;
+    border-top:11px solid var(--ink); filter:drop-shadow(0 1px 1px rgba(0,0,0,.25));
+  }
+  .marker.you{border-top-color:var(--teal-deep);}
+  .marker-imp{
+    position:absolute; top:-9px; transform:translateX(-50%) rotate(45deg);
+    width:13px; height:13px; background:var(--amber); border:2px solid #fff;
+    box-shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+  .spectrum-labels{display:flex; justify-content:space-between; margin-top:20px; font-size:.65rem; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace;}
+
+  .legend-mini{display:flex; gap:16px; flex-wrap:wrap; font-size:.75rem; color:var(--ink-soft); margin:14px 0 4px;}
+  .legend-mini .k{display:inline-flex; align-items:center; gap:6px;}
+  .legend-mini .tri{width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid var(--teal-deep);}
+  .legend-mini .dia{width:9px;height:9px;background:var(--amber); transform:rotate(45deg); border:2px solid #fff; box-shadow:0 0 0 1px var(--line);}
+
+  .how-scoring{margin-top:26px;}
+  details{background:var(--card); border:1px solid var(--line-soft); border-radius:8px; padding:2px 16px;}
+  summary{cursor:pointer; padding:12px 0; font-weight:600; font-size:.85rem; color:var(--ink);}
+  details p{font-size:.82rem; color:var(--ink-soft); margin:0 0 14px;}
+
+  .compare-table{width:100%; border-collapse:collapse; font-size:.78rem; margin-top:10px;}
+  .compare-table th, .compare-table td{text-align:left; padding:6px 8px; border-bottom:1px solid var(--line-soft);}
+  .compare-table th{color:var(--ink-faint); font-weight:600; font-size:.68rem; text-transform:uppercase; letter-spacing:.05em;}
+  .compare-table td.n{font-family:'IBM Plex Mono',monospace; color:var(--ink-faint); width:28px;}
+  .diff-cell{font-family:'IBM Plex Mono',monospace; text-align:center; width:40px;}
+
+  .ppm-card{
+    background:var(--card); border:1px solid var(--line-soft); border-radius:var(--radius);
+    padding:18px 18px 20px; margin:0 0 20px;
+  }
+  .ppm-card h3{font-size:1.05rem;}
+  .ppm-card-head{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:10px; margin-bottom:2px;}
+
+  .check-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:8px; margin-top:10px;}
+  .check-item{
+    display:flex; align-items:flex-start; gap:8px; padding:9px 10px;
+    border:1px solid var(--line); border-radius:7px; background:#fff;
+    font-size:.83rem; color:var(--ink-soft); cursor:pointer;
+    transition:border-color .12s, background .12s, color .12s;
+  }
+  .check-item:hover{border-color:var(--teal);}
+  .check-item input[type=checkbox]{margin-top:2px; accent-color:var(--teal); flex:none;}
+  .check-item.checked{border-color:var(--teal); background:var(--teal-tint); color:var(--ink);}
+
+  .trauma-row{
+    border:1px solid var(--line-soft); border-radius:8px; padding:12px 14px 14px;
+    margin-bottom:12px; background:#fff;
+  }
+  .trauma-row-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;}
+  .trauma-index{font-size:.72rem; color:var(--ink-faint); letter-spacing:.05em;}
+  .btn-remove{
+    border:1px solid var(--line); background:transparent; color:var(--ink-faint);
+    border-radius:6px; width:24px; height:24px; cursor:pointer; font-size:.72rem; line-height:1;
+    display:inline-flex; align-items:center; justify-content:center;
+  }
+  .btn-remove:hover{border-color:var(--danger); color:var(--danger);}
+  .trauma-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
+  @media (max-width:640px){ .trauma-grid{grid-template-columns:1fr;} }
+
+  .tying-item{margin-bottom:14px;}
+  .tying-item:last-child{margin-bottom:0;}
+  .tying-item label{
+    display:block; font-family:'IBM Plex Mono',monospace; font-size:.72rem;
+    text-transform:uppercase; letter-spacing:.07em; color:var(--ink-faint); margin-bottom:5px;
+  }
+
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:var(--ink); color:var(--paper); padding:10px 18px; border-radius:8px;
+    font-size:.85rem; box-shadow:0 4px 16px rgba(0,0,0,.25); z-index:50;
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(-4px);}
+  .toast.err{background:var(--danger);}
+
+  footer{max-width:760px; margin:40px auto 0; padding:20px 20px 40px; color:var(--ink-faint); font-size:.75rem; border-top:1px solid var(--line-soft);}
+  footer a{color:inherit;}
+  .visually-hidden{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap;}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} * {transition:none !important;} }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span id="brandTitle">Profile Map</span><small id="brandSubtitle">A self-assessment worksheet for your family history, existing diagnoses and current tendencies.</small></div>
+  <div class="topbar-name">
+    <input type="text" id="respondentName" placeholder="Your name / ID (optional)" aria-label="Your name or ID, included in export">
+  </div>
+  <div class="spacer"></div>
+  <div class="progress-pill" id="progressPill"><b id="progressCount">0</b>/45 answered</div>
+  <div class="topbar-actions">
+    <button class="btn btn-ghost btn-sm" id="btnReset">Reset</button>
+    <button class="btn btn-ghost btn-sm" id="btnImport">Import JSON</button>
+    <button class="btn btn-primary btn-sm" id="btnExport">Export JSON</button>
+  </div>
+  <input type="file" id="fileInput" accept="application/json,.json" class="visually-hidden">
+</div>
+
+<div class="tabbar">
+  <div class="tabbar-inner">
+    <button class="tab-btn active" data-tab="ppm" id="tabBtnPpm" type="button">PPM</button>
+    <button class="tab-btn" data-tab="hitop" id="tabBtnHitop" type="button">HiTOP‑BR</button>
+    <button class="tab-btn" data-tab="about" id="tabBtnAbout" type="button">What are PPMs?</button>
+  </div>
+</div>
+
+<div id="view-hitop" class="tab-view">
+
+  <div class="wrap">
+    <div class="intro">
+      <h1>HiTOP‑BR</h1>
+      <p class="sub">The Hierarchical Taxonomy of Psychopathology (HiTOP) is an alternative to more traditional psychopathological frameworks, such as the DSM-5 and ICD-11, for understanding mental health conditions and the associations between them, also known as comorbidity. The HiTOP system has already produced a <b><a href="https://en.wikipedia.org/wiki/Hierarchical_Taxonomy_of_Psychopathology#Validity_evidence">substantial body of evidence</a></b> for its veracity.</p>
+      <div class="disclaimer">
+        <strong>NOT a diagnostic tool!!</strong> This questionnaire is aimed towards helping professionals make decisions. It should not be used to diagnose or self-medicate your mental health.
+      </div>
+    </div>
+  </div>
+
+  <div class="legend-bar">
+    <div class="legend-inner">
+      <span class="chip"><b>1</b> Not at all</span>
+      <span class="chip"><b>2</b> A little</span>
+      <span class="chip"><b>3</b> Moderately</span>
+      <span class="chip"><b>4</b> A lot</span>
+      <span style="flex:1"></span>
+      <span style="color:var(--ink-faint);">Select one response per statement</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <form id="questionnaire"></form>
+
+    <section id="results">
+      <div class="results-head">
+        <h2>Your scores</h2>
+      </div>
+      <p class="scale-desc">Each dimension is scored 0–30 from your responses.</p>
+
+      <div class="hierarchy-wrap">
+        <svg id="hierarchySvg" viewBox="0 0 720 230" style="width:100%; height:auto; display:block;"></svg>
+      </div>
+
+      <div id="scaleList"></div>
+    </section>
+  </div>
+
+</div>
+
+<div id="view-ppm" class="tab-view active">
+  <div class="wrap">
+    <div class="intro" style="padding-top:32px;">
+
+      <h1>Psychological Profile Map</h1>
+      <div class="disclaimer">
+        <strong>NOT a diagnostic tool!!</strong> This questionnaire is aimed towards helping professionals make decisions. It should not be used to diagnose or self-medicate your mental health.
+      </div>
+    </div>
+
+    <div class="ppm-card">
+      <h3>Known or suspected conditions</h3>
+      <p class="scale-desc">Have you ever been diagnosed with any of the following mental health or neurodevelopmental conditions?</p>
+      <div class="check-grid" id="ppmConditions"></div>
+      <div class="field-row" style="margin-top:14px;">
+        <div class="field">
+          <label for="ppmConditionsOther">Other</label>
+          <input type="text" id="ppmConditionsOther">
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:6px;">
+        <div class="field">
+          <label for="ppmSuspectText">No formal diagnoses, but I suspect...</label>
+          <input type="text" id="ppmSuspectText">
+        </div>
+      </div>
+      <div class="field-row" style="margin-top:6px;">
+        <div class="field">
+          <label for="ppmSuspectWhy">Why?</label>
+          <textarea id="ppmSuspectWhy" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="ppm-card">
+      <h3>Family traits / genetics</h3>
+      <p class="scale-desc">Do any of your close relatives (parents, siblings, grandparents, etc.) have these traits?</p>
+      <div class="check-grid" id="ppmFamily"></div>
+      <div class="field-row" style="margin-top:14px;">
+        <div class="field">
+          <label for="ppmFamilyOther">Other</label>
+          <input type="text" id="ppmFamilyOther">
+        </div>
+      </div>
+    </div>
+
+    <div class="ppm-card">
+      <h3>Pain points / areas of weakness</h3>
+      <p class="scale-desc">Which of these feel like ongoing struggles for you?</p>
+      <div class="check-grid" id="ppmPainPoints"></div>
+    </div>
+
+    <div class="ppm-card">
+      <h3>In your own words</h3>
+      <p class="scale-desc">What patterns do you notice running through your family (emotionally, behaviorally, or cognitively)?</p>
+      <div class="field-row">
+        <div class="field">
+          <textarea id="ppmFamilyPatterns" rows="4"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="ppm-card">
+      <div class="ppm-card-head">
+        <h3 style="margin-bottom:0;">Trauma / life experience</h3>
+        <button class="btn btn-sm" id="btnAddTrauma" type="button">+ Add entry</button>
+      </div>
+      <p class="scale-desc">For each notable experience, note roughly when it happened and what lasting impact it's had.</p>
+      <div id="traumaList"></div>
+    </div>
+
+    <div class="ppm-card">
+      <h3>Tying it together</h3>
+      <p class="scale-desc">Use this frame to connect 2–3 issues: "My [pain point / weakness] seems connected to [predisposition/condition] + [specific experiences] + [current context]. It may have originally helped me by [functional purpose], but now it negatively impacts me by [negative impact]."</p>
+      <div id="tyingList"></div>
+    </div>
+  </div>
+</div>
+
+<div id="view-about" class="tab-view">
+  <div class="wrap">
+    <div class="intro" style="padding-top:32px;">
+      <h1>What are PPMs?</h1>
+      <p class="sub"> Psychological Profile Maps (PPMs) are psychological questionnaire and journaling tools. It helps you lay out your information for a clinician to review and for you to progressively make changes to as your treatment progresses.</p>
+    </div>
+
+    <div class="ppm-card">
+      <h3>Use Case Basis</h3>
+      <p class="scale-desc">Mental health professionals deal with a lot of cases which cannot possibly be generalized under the constraints of modern psychology. PPMs help physicians formulate cases with their patients, by condensing relevant information into an intuitive chart.</p>
+      <p class="scale-desc">The objective of PPMs is to reduce wasted time, money and effort in therapies and prescriptions that aren't relevant, or may even be harmful. For example, a well-formulated PPM can help a mental health professional differentiate serotonin-based depression symptoms from dopamine-related depression. In some cases, this will result in an erroneous diagnosis of "treatment-resistant depression" and a misprescription of serotonin-related drugs (such as SSRIs), which can cause long-term neurological and psychological harm to the patient.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+This questionnaire contains an <bold>unofficial</bold> interactive version of the HiTOP-BR. It has not been reviewed, validated or endorsed by the HiTOP Consortium, and should NOT be used for actual diagnosis. Provided AS IS for informational and recreative uses only.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+const QUESTIONS = [
+  "I find it easy to deceive others.",
+  "I deserve special treatment.",
+  "I have seen things that were not really there.",
+  "My fantasies feel very real to me.",
+  "I like having power.",
+  "I feel something is wrong with my body.",
+  "When I have the chance, I choose to be alone rather than with other people.",
+  "My moods are intense and unpredictable.",
+  "My mind has previously been flooded with troubling images of a bad experience.",
+  "I have unexplained pains in several parts of my body.",
+  "I have felt like I was outside of my body before.",
+  "I am happiest when I am alone.",
+  "I don't mind manipulating others if I find it necessary.",
+  "I have been bothered by several bodily symptoms (e.g., headache, fatigue or stomach problems) for which there was no clear or sufficient medical explanation.",
+  "I have trouble planning and keeping to schedules.",
+  "I have lost important things that I needed due to my own mood or poor organization.",
+  "I am frustrated with having to convince others I have a real illness.",
+  "Even when I am very careful, I worry whether I am doing something correctly.",
+  "Reading articles about disease has made me worry about my health.",
+  "I have paid my bills late or missed other important deadlines.",
+  "I have felt unexplained physical changes in my body.",
+  "I am disgusted with myself.",
+  "I feel on guard and on edge.",
+  "I am a messy person.",
+  "I do things to get others to notice me.",
+  "I have noticed small changes to how my body feels.",
+  "Things go best when I tell others what to do.",
+  "I have heard things before that no one else could hear.",
+  "I am never on time.",
+  "I have no interest in romantic relationships.",
+  "Intimate relationships seem like a hassle to me.",
+  "I say things without thinking.",
+  "People have told me I am coldhearted.",
+  "I tend to make decisions quickly without thinking them through.",
+  "I quit tasks that become too challenging.",
+  "I have had a hard time asserting myself to others.",
+  "I feel that I do not want to be in a close relationship.",
+  "I have trouble telling whether something really happened or if I just imagined it.",
+  "I have felt that things around me were not real.",
+  "I like attracting the attention of others.",
+  "I have been, or am afraid, that I might suffer from a serious illness.",
+  "I have thought a lot about death.",
+  "I have bought much more than I needed.",
+  "I have felt overwhelmed by anxiety before.",
+  "I expect to get treated better than others."
+]; // index 0 = item 1
+
+const SCALES = {
+  "p-Factor":         { items:[1,6,11,14,22,23,25,28,31,32,35,37], tier:1,
+                          desc:"Psychopathology-factor. A general factor found to be correlated with higher levels of functional, cognitive or emotional impairment." },
+  "Internalizing":    { items:[8,9,18,22,23,42,44], tier:2,
+                          desc:"Inward-directed patterns and schemas, including anxiety, low mood, emotional sensitivity, or excessive guilt or shame. Further divided into the Fear and Distress subfactors." },
+  "Externalizing":    { items:[1,13,15,16,25,32,34,35,40,45], tier:2,
+                          desc:"Outward-directed patterns and schemas through behavior. A high degree in Externalizing is correlated with difficulty regulating actions, moods, impulses or social behaviors. It is further divided into Disinhibited Externalization and Externalized Antagonism." },
+  "Antagonism":       { items:[1,2,5,13,25,27,33,40,45], tier:3,
+                          desc:"Also known as Antagonistic Externalizing or Externalized Antagonism, it is correlated with interpersonal conflict later than impulse control. A high degree of this subfactor involves behaviors such as hostility, manipulativeness, attention-seeking, aggression, deceitfulness and low empathy." },
+  "Disinhibition":    { items:[15,16,20,24,29,32,34,35,43], tier:3,
+                          desc:"Also known as Disinhibited Externalizing. It describes poor self-control and is correlated with behaviors such as substance abuse, risk-taking, workaholism, hoarding, poor organizational skills and reduced attention span." },
+  "Detachment":       { items:[7,12,30,31,36,37], tier:3,
+                          desc:"Described as a reduced motivation for social interaction or emotional engagement, and is linked to behaviors such as anhedonia, depressivity, withdrawal and avoidance of intimacy." },
+  "Somatoform":       { items:[6,10,14,17,19,21,26,41], tier:3,
+                          desc:"Describes physical symptoms that cannot be fully medically explained, or physical symptoms with excessive amounts of distress. Correlated with gastro-intestinal pain, headaches, chronic pain, seizures and fainting." },
+  "Thought Disorder":{ items:[3,4,11,28,38,39], tier:3,
+                          desc:"Describes abnormalities and disturbance in perception, beliefs, thinking or ideas, and is correlated with hallucinations, magical thinking, paranoia and other unusual beliefs." }
+};
+const SCALE_ORDER = ["p-Factor","Internalizing","Externalizing","Antagonism","Disinhibition","Detachment","Somatoform","Thought Disorder"];
+const PPM_CONDITIONS = [
+  {key:"adhd", label:"ADHD"},
+  {key:"autism", label:"Autism / ASD"},
+  {key:"anxiety", label:"Anxiety disorder(s)"},
+  {key:"depression", label:"Depression"},
+  {key:"ptsd", label:"PTSD / C-PTSD"},
+  {key:"learning", label:"Learning disability (e.g., dyslexia, dyscalculia)"},
+  {key:"personality", label:"Personality disorders (borderline, narcissistic, histrionic, schizoid, etc.)"}
+];
+const PPM_FAMILY = [
+  {key:"adhd", label:"ADHD-like traits (restless mind, distractibility, impulsiveness, etc.)"},
+  {key:"autism", label:"Autism-like traits (rigidity, sensory issues, special interests, social difficulty, etc.)"},
+  {key:"learning", label:"Learning disability (e.g., dyslexia, dyscalculia)"},
+  {key:"mood", label:"Mood disorders (depression, bipolar, etc.)"},
+  {key:"anxiety", label:"Anxiety, panic, phobias"},
+  {key:"addiction", label:"Addiction / substance misuse"},
+  {key:"personality", label:"Personality disorders (borderline, narcissistic, histrionic, schizoid, etc.)"},
+  {key:"psychosis", label:"Psychosis / schizophrenia-spectrum conditions"},
+  {key:"generational", label:"Generational trauma-related struggles"}
+];
+const PPM_PAIN_POINTS = [
+  {key:"responseInhibition", label:"Response inhibition"},
+  {key:"workingMemory", label:"Working memory"},
+  {key:"emotionalControl", label:"Emotional control"},
+  {key:"taskInitiation", label:"Task initiation"},
+  {key:"sustainedAttention", label:"Sustained attention"},
+  {key:"planning", label:"Planning / Prioritizing"},
+  {key:"organization", label:"Organization"},
+  {key:"timeManagement", label:"Time management"},
+  {key:"flexibility", label:"Flexibility"},
+  {key:"metacognition", label:"Metacognition"},
+  {key:"persistence", label:"Goal-directed persistence"},
+  {key:"stressTolerance", label:"Stress tolerance"}
+];
+
+function defaultPPM(){
+  const mk = (items) => Object.fromEntries(items.map(i => [i.key, false]));
+  return {
+    conditions: mk(PPM_CONDITIONS),
+    conditionsOther: "",
+    suspectText: "",
+    suspectWhy: "",
+    family: mk(PPM_FAMILY),
+    familyOther: "",
+    painPoints: mk(PPM_PAIN_POINTS),
+    familyPatterns: "",
+    trauma: [ {experience:"",when:"",impact:""}, {experience:"",when:"",impact:""} ],
+    tying: ["", "", ""]
+  };
+}
+
+/* ---------------------------------------------------------------
+ states
+--------------------------------------------------------------- */
+let responses = {};   
+let ppm = defaultPPM();
+let activeTab = "ppm";
+
+const BRAND_TEXT = {
+  hitop: {
+    title: "HiTOP‑BR",
+    subtitle: 'Based on the <a href="https://www.hitop-system.org" style="color: white;">The Hierarchical Taxonomy of Pathology (HiTOP) Brief Report Instrument</a>'
+  },
+  ppm: {
+    title: "Profile Map",
+    subtitle: "Personal self-assessment worksheet"
+  },
+  about: {
+    title: "What are PPMs?",
+    subtitle: "Information and use case basis"
+  }
+};
+
+const els = {};
+["progressCount","progressPill","questionnaire","scaleList","hierarchySvg","respondentName",
+ "toast","fileInput","btnExport","btnImport","btnReset",
+ "tabBtnHitop","tabBtnPpm","tabBtnAbout","viewHitop","viewPpm","viewAbout","brandTitle","brandSubtitle",
+ "ppmConditions","ppmConditionsOther","ppmSuspectText","ppmSuspectWhy",
+ "ppmFamily","ppmFamilyOther","ppmPainPoints","ppmFamilyPatterns",
+ "traumaList","btnAddTrauma","tyingList"
+].forEach(id => els[id]=document.getElementById(id === "viewHitop" ? "view-hitop" : id === "viewPpm" ? "view-ppm" : id === "viewAbout" ? "view-about" : id));
+
+function buildQuestionnaire(){
+  const frag = document.createDocumentFragment();
+  QUESTIONS.forEach((text, i) => {
+    const qNum = i+1;
+    const row = document.createElement("div");
+    row.className = "item";
+    row.dataset.q = qNum;
+
+    const num = document.createElement("div");
+    num.className = "item-num";
+    num.textContent = String(qNum).padStart(2,"0");
+
+    const p = document.createElement("p");
+    p.className = "item-text";
+    p.textContent = text;
+
+    const opts = document.createElement("div");
+    opts.className = "item-options";
+    opts.setAttribute("role","radiogroup");
+    opts.setAttribute("aria-label", "Response for item " + qNum);
+
+    [1,2,3,4].forEach(v => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt";
+      btn.dataset.val = v;
+      btn.textContent = v;
+      btn.title = ["","Not at all","A little","Moderately","A lot"][v];
+      btn.setAttribute("role","radio");
+      btn.setAttribute("aria-checked","false");
+      btn.addEventListener("click", () => setResponse(qNum, v, row, opts));
+      opts.appendChild(btn);
+    });
+
+    row.appendChild(num);
+    row.appendChild(p);
+    row.appendChild(opts);
+    frag.appendChild(row);
+  });
+  els.questionnaire.appendChild(frag);
+}
+
+function setResponse(qNum, val, row, opts){
+  responses[qNum] = val;
+  row.classList.add("answered");
+  [...opts.children].forEach(b => {
+    const active = Number(b.dataset.val) === val;
+    b.classList.toggle("active", active);
+    b.setAttribute("aria-checked", active ? "true":"false");
+  });
+  refresh();
+}
+
+function applyResponsesToUI(){
+  [...els.questionnaire.querySelectorAll(".item")].forEach(row => {
+    const qNum = Number(row.dataset.q);
+    const val = responses[qNum];
+    const opts = row.querySelector(".item-options");
+    row.classList.toggle("answered", !!val);
+    [...opts.children].forEach(b => {
+      const active = Number(b.dataset.val) === val;
+      b.classList.toggle("active", active);
+      b.setAttribute("aria-checked", active ? "true":"false");
+    });
+  });
+}
+
+function computeScores(respMap){
+  const out = {};
+  SCALE_ORDER.forEach(name => {
+    const items = SCALES[name].items;
+    let sum = 0;
+    items.forEach(q => { sum += Number(respMap[q]) || 0; });
+    const avg = sum / items.length;
+    out[name] = avg*10 - 10;
+  });
+  return out;
+}
+
+function answeredCount(respMap){
+  return Object.keys(respMap).filter(k => respMap[k]).length;
+}
+
+/* ---------------------------------------------------------------
+ fancy rendering shit
+--------------------------------------------------------------- */
+const RANGE_MIN = -10, RANGE_MAX = 30, RANGE_SPAN = 40;
+function pct(score){
+  const p = ((score - RANGE_MIN) / RANGE_SPAN) * 100;
+  return Math.max(0, Math.min(100, p));
+}
+function colorForScore(score){
+  const t = Math.max(0, Math.min(1, (score - 0) / 30)); // 0..30 -> 0..1
+  const c1 = [31,93,87], c2 = [190,95,44]; // teal -> amber
+  const c = c1.map((v,i)=> Math.round(v + (c2[i]-v)*t));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+
+function refresh(){
+  els.progressCount.textContent = answeredCount(responses);
+  const myScores = computeScores(responses);
+
+  renderScaleList(myScores);
+  renderHierarchy(myScores);
+}
+
+function renderScaleList(myScores){
+  els.scaleList.innerHTML = "";
+  SCALE_ORDER.forEach(name => {
+    const s = SCALES[name];
+    const my = myScores[name];
+
+    const row = document.createElement("div");
+    row.className = "scale-row";
+
+    row.innerHTML = `
+      <div class="scale-head">
+        <span class="scale-name">${name}</span>
+        <span class="scale-score">${my.toFixed(1)}</span>
+      </div>
+      <p class="scale-desc">${s.desc}</p>
+      <div class="spectrum" data-scale="${name}">
+        <div class="gridline" style="left:${pct(0)}%"></div>
+        <div class="gridline" style="left:${pct(10)}%"></div>
+        <div class="gridline" style="left:${pct(20)}%"></div>
+        <div class="gridline" style="left:${pct(30)}%"></div>
+        <div class="marker you" style="left:${pct(my)}%" title="You: ${my.toFixed(1)}"></div>
+      </div>
+      <div class="spectrum-labels"><span>0</span><span>10</span><span>20</span><span>30</span></div>
+    `;
+    els.scaleList.appendChild(row);
+  });
+}
+
+function renderHierarchy(myScores){
+  const svg = els.hierarchySvg;
+  const W = 720, H = 230;
+  const apex = { x: W/2, y: 34 };
+  const children = SCALE_ORDER.filter(n => SCALES[n].tier !== 1);
+  const n = children.length;
+  const marginX = 46;
+  const usableW = W - marginX*2;
+  const childY = 168;
+
+  let svgParts = [];
+  // lines
+  children.forEach((name, i) => {
+    const cx = marginX + (usableW/(n-1))*i;
+    svgParts.push(`<line x1="${apex.x}" y1="${apex.y+16}" x2="${cx}" y2="${childY-16}" stroke="#C2CBCC" stroke-width="1.5"/>`);
+  });
+
+  // p-factor
+  const pf = myScores["p-Factor"];
+  svgParts.push(nodeSvg(apex.x, apex.y, "p-Factor", pf, 20));
+
+  // other ones
+  children.forEach((name, i) => {
+    const cx = marginX + (usableW/(n-1))*i;
+    svgParts.push(nodeSvg(cx, childY, name, myScores[name], 15, true));
+  });
+
+  svg.innerHTML = svgParts.join("");
+}
+
+function nodeSvg(cx, cy, label, score, r, small){
+  const fill = colorForScore(score);
+  const labelLines = wrapLabel(label);
+  const fontSize = small ? 10.5 : 11.5;
+  let out = `<g>`;
+  out += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="#fff" stroke-width="2"/>`;
+  out += `<text x="${cx}" y="${cy+4}" text-anchor="middle" font-size="${small?9.5:10.5}" font-weight="600" fill="#fff" font-family="IBM Plex Mono, monospace">${score.toFixed(0)}</text>`;
+  labelLines.forEach((line, i) => {
+    out += `<text x="${cx}" y="${cy + r + 14 + i*11}" text-anchor="middle" font-size="${fontSize}" fill="#48575F">${line}</text>`;
+  });
+  out += `</g>`;
+  return out;
+}
+function wrapLabel(label){
+  if (label.length <= 11) return [label];
+  const parts = label.split(" ");
+  if (parts.length === 1) return [label];
+  const mid = Math.ceil(parts.length/2);
+  return [parts.slice(0,mid).join(" "), parts.slice(mid).join(" ")];
+}
+
+/* ---------------------------------------------------------------
+build and render the ppm tab
+--------------------------------------------------------------- */
+function escapeAttr(s){
+  return String(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+}
+function escapeHtml(s){
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function buildCheckGrid(container, items, stateObj){
+  container.innerHTML = "";
+  items.forEach(it => {
+    const label = document.createElement("label");
+    label.className = "check-item" + (stateObj[it.key] ? " checked" : "");
+    label.innerHTML = `<input type="checkbox" data-key="${it.key}" ${stateObj[it.key] ? "checked":""}><span>${it.label}</span>`;
+    const input = label.querySelector("input");
+    input.addEventListener("change", () => {
+      stateObj[it.key] = input.checked;
+      label.classList.toggle("checked", input.checked);
+    });
+    container.appendChild(label);
+  });
+}
+
+function refreshCheckGrid(container, stateObj){
+  container.querySelectorAll("input[type=checkbox]").forEach(input => {
+    const key = input.dataset.key;
+    input.checked = !!stateObj[key];
+    input.closest(".check-item").classList.toggle("checked", input.checked);
+  });
+}
+
+function renderTraumaList(){
+  els.traumaList.innerHTML = "";
+  ppm.trauma.forEach((row, idx) => {
+    const box = document.createElement("div");
+    box.className = "trauma-row";
+    box.innerHTML = `
+      <div class="trauma-row-head">
+        <span class="trauma-index mono">ENTRY ${idx+1}</span>
+        <button type="button" class="btn-remove" aria-label="Remove entry ${idx+1}">✕</button>
+      </div>
+      <div class="trauma-grid">
+        <div class="field"><label>Trauma / life experience</label><input type="text" class="t-exp" value="${escapeAttr(row.experience)}" placeholder="What happened"></div>
+        <div class="field"><label>When did it occur?</label><input type="text" class="t-when" value="${escapeAttr(row.when)}" placeholder="Approx. age / year"></div>
+        <div class="field"><label>Lasting impacts</label><input type="text" class="t-impact" value="${escapeAttr(row.impact)}" placeholder="What changed afterward"></div>
+      </div>
+    `;
+    box.querySelector(".t-exp").addEventListener("input", e => { ppm.trauma[idx].experience = e.target.value; });
+    box.querySelector(".t-when").addEventListener("input", e => { ppm.trauma[idx].when = e.target.value; });
+    box.querySelector(".t-impact").addEventListener("input", e => { ppm.trauma[idx].impact = e.target.value; });
+    box.querySelector(".btn-remove").addEventListener("click", () => {
+      ppm.trauma.splice(idx,1);
+      if (ppm.trauma.length === 0) ppm.trauma.push({experience:"",when:"",impact:""});
+      renderTraumaList();
+    });
+    els.traumaList.appendChild(box);
+  });
+}
+
+function renderTyingList(){
+  els.tyingList.innerHTML = "";
+  ppm.tying.forEach((val, idx) => {
+    const wrap = document.createElement("div");
+    wrap.className = "tying-item";
+    wrap.innerHTML = `<label>Issue #${idx+1}</label><textarea rows="3" placeholder="My _ seems connected to _. It may have originally helped me with _, but now it costs me _.">${escapeHtml(val)}</textarea>`;
+    wrap.querySelector("textarea").addEventListener("input", e => { ppm.tying[idx] = e.target.value; });
+    els.tyingList.appendChild(wrap);
+  });
+}
+
+function populatePPMForm(){
+  refreshCheckGrid(els.ppmConditions, ppm.conditions);
+  refreshCheckGrid(els.ppmFamily, ppm.family);
+  refreshCheckGrid(els.ppmPainPoints, ppm.painPoints);
+  els.ppmConditionsOther.value = ppm.conditionsOther;
+  els.ppmSuspectText.value = ppm.suspectText;
+  els.ppmSuspectWhy.value = ppm.suspectWhy;
+  els.ppmFamilyOther.value = ppm.familyOther;
+  els.ppmFamilyPatterns.value = ppm.familyPatterns;
+  renderTraumaList();
+  renderTyingList();
+}
+
+function mergePPM(data){
+  const base = defaultPPM();
+  if (!data || typeof data !== "object") return base;
+  if (data.conditions) Object.keys(base.conditions).forEach(k => { base.conditions[k] = !!data.conditions[k]; });
+  base.conditionsOther = typeof data.conditionsOther === "string" ? data.conditionsOther : "";
+  base.suspectText = typeof data.suspectText === "string" ? data.suspectText : "";
+  base.suspectWhy = typeof data.suspectWhy === "string" ? data.suspectWhy : "";
+  if (data.family) Object.keys(base.family).forEach(k => { base.family[k] = !!data.family[k]; });
+  base.familyOther = typeof data.familyOther === "string" ? data.familyOther : "";
+  if (data.painPoints) Object.keys(base.painPoints).forEach(k => { base.painPoints[k] = !!data.painPoints[k]; });
+  base.familyPatterns = typeof data.familyPatterns === "string" ? data.familyPatterns : "";
+  if (Array.isArray(data.trauma) && data.trauma.length){
+    base.trauma = data.trauma.map(r => ({
+      experience: (r && typeof r.experience === "string") ? r.experience : "",
+      when: (r && typeof r.when === "string") ? r.when : "",
+      impact: (r && typeof r.impact === "string") ? r.impact : ""
+    }));
+  }
+  if (Array.isArray(data.tying)){
+    base.tying = [0,1,2].map(i => typeof data.tying[i] === "string" ? data.tying[i] : "");
+  }
+  return base;
+}
+
+/* ---------------------------------------------------------------
+tabs
+--------------------------------------------------------------- */
+function setActiveTab(tab){
+  activeTab = tab;
+  els.viewHitop.classList.toggle("active", tab === "hitop");
+  els.viewPpm.classList.toggle("active", tab === "ppm");
+  els.viewAbout.classList.toggle("active", tab === "about");
+  els.tabBtnHitop.classList.toggle("active", tab === "hitop");
+  els.tabBtnPpm.classList.toggle("active", tab === "ppm");
+  els.tabBtnAbout.classList.toggle("active", tab === "about");
+  els.progressPill.style.display = tab === "hitop" ? "inline-flex" : "none";
+  els.brandTitle.textContent = BRAND_TEXT[tab].title;
+  els.brandSubtitle.innerHTML = BRAND_TEXT[tab].subtitle;
+}
+
+/* ---------------------------------------------------------------
+export/import/reset stuff
+--------------------------------------------------------------- */
+function showToast(msg, isErr){
+  els.toast.textContent = msg;
+  els.toast.classList.toggle("err", !!isErr);
+  els.toast.classList.add("show");
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=> els.toast.classList.remove("show"), 2600);
+}
+
+function slugify(s){
+  return (s||"anonymous").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"") || "anonymous";
+}
+
+function exportJSON(){
+  const scores = computeScores(responses);
+  const payload = {
+    instrument: "HiTOP-BR+PPM",
+    version: "1.1",
+    respondent: els.respondentName.value.trim() || null,
+    completedAt: new Date().toISOString(),
+    hitop: {
+      answeredCount: answeredCount(responses),
+      totalItems: QUESTIONS.length,
+      responses: responses,
+      scores: scores
+    },
+    ppm: ppm
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const dateStr = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `hitop-br-ppm_${slugify(payload.respondent)}_${dateStr}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  showToast("Exported " + a.download);
+}
+
+function importJSONFile(file){
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const parsed = JSON.parse(reader.result);
+      if (!parsed || typeof parsed !== "object"){
+        throw new Error("File not recognized.");
+      }
+
+      const hitopResponses = (parsed.hitop && parsed.hitop.responses) || parsed.responses;
+      let hasHitop = false;
+      if (hitopResponses && typeof hitopResponses === "object"){
+        const clean = {};
+        Object.keys(hitopResponses).forEach(k => {
+          const v = Number(hitopResponses[k]);
+          if (v>=1 && v<=4) clean[k] = v;
+        });
+        if (Object.keys(clean).length){
+          responses = clean;
+          applyResponsesToUI();
+          hasHitop = true;
+        }
+      }
+
+      let hasPpm = false;
+      if (parsed.ppm && typeof parsed.ppm === "object"){
+        ppm = mergePPM(parsed.ppm);
+        populatePPMForm();
+        hasPpm = true;
+      }
+
+      if (!hasHitop && !hasPpm){
+        throw new Error("No recognizable HiTOP responses or Profile Map data found.");
+      }
+      if (parsed.respondent) els.respondentName.value = parsed.respondent;
+
+      refresh();
+      const parts = [];
+      if (hasHitop) parts.push("HiTOP‑BR answers");
+      if (hasPpm) parts.push("Profile Map worksheet");
+      showToast("Imported " + parts.join(" & "));
+    }catch(err){
+      showToast("Import failed: " + err.message, true);
+    }
+  };
+  reader.onerror = () => showToast("Could not read that file.", true);
+  reader.readAsText(file);
+}
+
+function resetAll(){
+  if (activeTab === "about"){
+    showToast("Nothing to reset here.");
+    return;
+  }
+  if (activeTab === "ppm"){
+    if (!confirm("Clear all of your Profile Map entries? This can't be undone.")) return;
+    ppm = defaultPPM();
+    populatePPMForm();
+    showToast("Profile Map cleared.");
+    return;
+  }
+  if (!confirm("Clear all of your current answers? This can't be undone.")) return;
+  responses = {};
+  [...els.questionnaire.querySelectorAll(".item")].forEach(row => {
+    row.classList.remove("answered");
+    [...row.querySelectorAll(".opt")].forEach(b => { b.classList.remove("active"); b.setAttribute("aria-checked","false"); });
+  });
+  refresh();
+  showToast("Answers cleared up.");
+}
+
+/* ---------------------------------------------------------------
+ initstuff
+--------------------------------------------------------------- */
+els.btnExport.addEventListener("click", exportJSON);
+els.btnImport.addEventListener("click", () => els.fileInput.click());
+els.fileInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (file) importJSONFile(file);
+  e.target.value = "";
+});
+els.btnReset.addEventListener("click", resetAll);
+els.tabBtnHitop.addEventListener("click", () => setActiveTab("hitop"));
+els.tabBtnPpm.addEventListener("click", () => setActiveTab("ppm"));
+els.tabBtnAbout.addEventListener("click", () => setActiveTab("about"));
+els.btnAddTrauma.addEventListener("click", () => {
+  ppm.trauma.push({experience:"",when:"",impact:""});
+  renderTraumaList();
+});
+els.ppmConditionsOther.addEventListener("input", e => { ppm.conditionsOther = e.target.value; });
+els.ppmSuspectText.addEventListener("input", e => { ppm.suspectText = e.target.value; });
+els.ppmSuspectWhy.addEventListener("input", e => { ppm.suspectWhy = e.target.value; });
+els.ppmFamilyOther.addEventListener("input", e => { ppm.familyOther = e.target.value; });
+els.ppmFamilyPatterns.addEventListener("input", e => { ppm.familyPatterns = e.target.value; });
+
+buildQuestionnaire();
+buildCheckGrid(els.ppmConditions, PPM_CONDITIONS, ppm.conditions);
+buildCheckGrid(els.ppmFamily, PPM_FAMILY, ppm.family);
+buildCheckGrid(els.ppmPainPoints, PPM_PAIN_POINTS, ppm.painPoints);
+renderTraumaList();
+renderTyingList();
+setActiveTab("ppm");
+refresh();
+
+})();
+</script>
+</body>
+</html>
