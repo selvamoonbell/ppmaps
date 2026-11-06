@@ -181,7 +181,7 @@ a:visited{
 
   #questionnaire{margin-top:4px;}
   .item{
-    display:flex; align-items:center; gap:14px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap;
     padding:13px 4px; border-bottom:1px solid var(--line-soft);
   }
   .item:nth-child(odd){background:var(--card);}
@@ -201,12 +201,31 @@ a:visited{
   .opt:active{transform:translateY(1px);}
   .opt.active{background:var(--teal); border-color:var(--teal); color:#fff;}
   .item.answered .item-num{color:var(--teal-deep);}
+  .elab-btn{
+    flex:none; height:34px; padding:0 11px; border-radius:7px; border:1px solid var(--line);
+    background:#fff; color:var(--ink-soft); font-size:.78rem; font-weight:600; cursor:pointer;
+    font-family:'IBM Plex Mono',monospace; white-space:nowrap;
+    transition:background .12s, border-color .12s, color .12s;
+  }
+  .elab-btn:hover{border-color:var(--teal);}
+  .elab-btn.open{border-color:var(--teal); color:var(--teal-deep);}
+  .elab-btn.filled{background:var(--teal); border-color:var(--teal); color:#fff;}
+  .elab-wrap{flex:1 1 100%; order:5; padding:0 0 2px 40px; display:none;}
+  .elab-wrap.open{display:block;}
+  .elab-text{
+    width:100%; min-height:80px; resize:vertical; box-sizing:border-box;
+    padding:9px 11px; border:1px solid var(--line); border-radius:7px;
+    font:inherit; font-size:.88rem; color:var(--ink); background:#fff;
+  }
+  .elab-text:focus{outline:none; border-color:var(--teal);}
 
   @media (max-width:600px){
     .item{flex-wrap:wrap;}
     .item-text{flex:1 1 100%; order:1; margin-bottom:8px;}
     .item-num{order:0;}
     .item-options{order:2; margin-left:40px;}
+    .elab-btn{order:2;}
+    .elab-wrap{padding-left:40px;}
     .opt{width:30px; height:30px; font-size:.78rem;}
     .topbar{padding:0 12px; gap:10px;}
     .topbar .brand small{display:none;}
@@ -349,7 +368,7 @@ a:visited{
   <div class="tabbar-inner">
     <button class="tab-btn active" data-tab="ppm" id="tabBtnPpm" type="button">PPM</button>
     <button class="tab-btn" data-tab="hitop" id="tabBtnHitop" type="button">HiTOP‑BR</button>
-    <button class="tab-btn" data-tab="about" id="tabBtnAbout" type="button">What are PPMs?</button>
+    <button class="tab-btn" data-tab="about" id="tabBtnAbout" type="button">Mission Objective and Privacy Policy</button>
   </div>
 </div>
 
@@ -359,6 +378,7 @@ a:visited{
     <div class="intro">
       <h1>HiTOP‑BR</h1>
       <p class="sub">The Hierarchical Taxonomy of Psychopathology (HiTOP) is an alternative to more traditional psychopathological frameworks, such as the DSM-5 and ICD-11, for understanding mental health conditions and the associations between them, also known as comorbidity. The HiTOP system has already produced a <b><a href="https://en.wikipedia.org/wiki/Hierarchical_Taxonomy_of_Psychopathology#Validity_evidence">substantial body of evidence</a></b> for its veracity.</p>
+
       <div class="disclaimer">
         <strong>NOT a diagnostic tool!!</strong> This questionnaire is aimed towards helping professionals make decisions. It should not be used to diagnose or self-medicate your mental health.
       </div>
@@ -477,14 +497,17 @@ a:visited{
 <div id="view-about" class="tab-view">
   <div class="wrap">
     <div class="intro" style="padding-top:32px;">
-      <h1>What are PPMs?</h1>
+      <h1>Mission Objective</h1>
       <p class="sub"> Psychological Profile Maps (PPMs) are psychological questionnaire and journaling tools. It helps you lay out your information for a clinician to review and for you to progressively make changes to as your treatment progresses.</p>
-    </div>
-
-    <div class="ppm-card">
+   <div class="ppm-card">
       <h3>Use Case Basis</h3>
       <p class="scale-desc">Mental health professionals deal with a lot of cases which cannot possibly be generalized under the constraints of modern psychology. PPMs help physicians formulate cases with their patients, by condensing relevant information into an intuitive chart.</p>
-      <p class="scale-desc">The objective of PPMs is to reduce wasted time, money and effort in therapies and prescriptions that aren't relevant, or may even be harmful. For example, a well-formulated PPM can help a mental health professional differentiate serotonin-based depression symptoms from dopamine-related depression. In some cases, this will result in an erroneous diagnosis of "treatment-resistant depression" and a misprescription of serotonin-related drugs (such as SSRIs), which can cause long-term neurological and psychological harm to the patient.</p>
+      <p class="scale-desc">The objective of PPMs is to reduce wasted time, money and effort in therapies and prescriptions that aren't relevant, or may even be harmful. For example, a well-formulated PPM can help a mental health professional differentiate serotonin-based depression symptoms from dopamine-related depression. In some cases, this will result in an erroneous diagnosis of "treatment-resistant depression" and a misprescription of serotonin-related drugs (such as SSRIs), which can cause long-term neurological and psychological harm to the patient.</p></div>
+ <h1>Privacy Policy</h1><p class="sub">This website does not collect, store or distribute any personal information about users who use the service. Like all other web servers, our hosting provider collects your IP and basic request details (such as browser, requested pages, etc).<br>
+<h1>Software License</h1><p class="sub">Psychological Profile Maps are copyleft and free for use for anybody who wishes to contribute or redistribute, following the MIT license:<br><br><i>
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br><br>
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</i></p>
+    </div>
     </div>
   </div>
 </div>
@@ -494,7 +517,6 @@ This questionnaire contains an <bold>unofficial</bold> interactive version of th
 </footer>
 
 <div class="toast" id="toast"></div>
-
 <script>
 (function(){
 "use strict";
@@ -619,7 +641,8 @@ function defaultPPM(){
 /* ---------------------------------------------------------------
  states
 --------------------------------------------------------------- */
-let responses = {};   
+let responses = {};
+let elaborations = {};   
 let ppm = defaultPPM();
 let activeTab = "ppm";
 
@@ -633,8 +656,8 @@ const BRAND_TEXT = {
     subtitle: "Personal self-assessment worksheet"
   },
   about: {
-    title: "What are PPMs?",
-    subtitle: "Information and use case basis"
+    title: "Mission Objective and Privacy Policy",
+    subtitle: ""
   }
 };
 
@@ -684,9 +707,58 @@ function buildQuestionnaire(){
     row.appendChild(num);
     row.appendChild(p);
     row.appendChild(opts);
+
+    const eBtn = document.createElement("button");
+    eBtn.type = "button";
+    eBtn.className = "elab-btn";
+    eBtn.textContent = "↓ Elaborate";
+    eBtn.setAttribute("aria-expanded","false");
+
+    const eWrap = document.createElement("div");
+    eWrap.className = "elab-wrap";
+    const ta = document.createElement("textarea");
+    ta.className = "elab-text";
+    ta.placeholder = "Elaborate on your answer.";
+    ta.setAttribute("aria-label", "Elaboration for item " + qNum);
+    eWrap.appendChild(ta);
+
+    eBtn.addEventListener("click", () => {
+      const open = !eWrap.classList.contains("open");
+      eWrap.classList.toggle("open", open);
+      eBtn.setAttribute("aria-expanded", open ? "true":"false");
+      updateElabBtn(eBtn, eWrap, ta);
+      if (open) ta.focus();
+    });
+    ta.addEventListener("input", () => {
+      if (ta.value) elaborations[qNum] = ta.value; else delete elaborations[qNum];
+      updateElabBtn(eBtn, eWrap, ta);
+    });
+
+    row.appendChild(eBtn);
+    row.appendChild(eWrap);
     frag.appendChild(row);
   });
   els.questionnaire.appendChild(frag);
+}
+
+function updateElabBtn(btn, wrap, ta){
+  const open = wrap.classList.contains("open");
+  btn.textContent = open ? "↑ Elaborate" : "↓ Elaborate";
+  btn.classList.toggle("open", open);
+  btn.classList.toggle("filled", !!ta.value.trim());
+}
+
+function applyElaborationsToUI(){
+  [...els.questionnaire.querySelectorAll(".item")].forEach(row => {
+    const qNum = Number(row.dataset.q);
+    const ta = row.querySelector(".elab-text");
+    const wrap = row.querySelector(".elab-wrap");
+    const btn = row.querySelector(".elab-btn");
+    ta.value = elaborations[qNum] || "";
+    if (ta.value) wrap.classList.add("open");
+    btn.setAttribute("aria-expanded", wrap.classList.contains("open") ? "true":"false");
+    updateElabBtn(btn, wrap, ta);
+  });
 }
 
 function setResponse(qNum, val, row, opts){
@@ -983,6 +1055,7 @@ function exportJSON(){
       answeredCount: answeredCount(responses),
       totalItems: QUESTIONS.length,
       responses: responses,
+      elaborations: elaborations,
       scores: scores
     },
     ppm: ppm
@@ -1024,6 +1097,18 @@ function importJSONFile(file){
         }
       }
 
+      const hitopElab = parsed.hitop && parsed.hitop.elaborations;
+      if (hitopElab && typeof hitopElab === "object"){
+        const cleanE = {};
+        Object.keys(hitopElab).forEach(k => {
+          const n = Number(k);
+          if (n>=1 && n<=QUESTIONS.length && typeof hitopElab[k] === "string" && hitopElab[k]) cleanE[n] = hitopElab[k];
+        });
+        elaborations = cleanE;
+        applyElaborationsToUI();
+        if (Object.keys(cleanE).length) hasHitop = true;
+      }
+
       let hasPpm = false;
       if (parsed.ppm && typeof parsed.ppm === "object"){
         ppm = mergePPM(parsed.ppm);
@@ -1063,8 +1148,14 @@ function resetAll(){
   }
   if (!confirm("Clear all of your current answers? This can't be undone.")) return;
   responses = {};
+  elaborations = {};
   [...els.questionnaire.querySelectorAll(".item")].forEach(row => {
     row.classList.remove("answered");
+    const ta = row.querySelector(".elab-text");
+    const wrap = row.querySelector(".elab-wrap");
+    ta.value = "";
+    wrap.classList.remove("open");
+    updateElabBtn(row.querySelector(".elab-btn"), wrap, ta);
     [...row.querySelectorAll(".opt")].forEach(b => { b.classList.remove("active"); b.setAttribute("aria-checked","false"); });
   });
   refresh();
