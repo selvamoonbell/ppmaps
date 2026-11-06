@@ -22,4 +22,4 @@ jobs:
         env:
           USER_NAME: ${{ secrets.VPS_USER }}
           HOST: ${{ secrets.VPS_HOST }}
-        run: ssh "$USER_NAME@$HOST" '~/deploy-psychprofilemaps.sh'
+        run: ssh -v "$USER_NAME@$HOST" '~/deploy-psychprofilemaps.sh'
